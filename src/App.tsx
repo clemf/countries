@@ -13,6 +13,8 @@ const CountriesGame: React.FC<{ countries: Country[] }> = ({ countries }) => {
   ]);
   const [currentCountry, setCurrentCountry] = useState<Country>(countries[0]);
   const [currentOptions, setCurrentOptions] = useState<string[]>([]);
+  const [previousCountry, setPreviousCountry] = useState<Country>();
+  const [previousResult, setPreviousResult] = useState<boolean>();
 
   const setupRound = useCallback(() => {
     const shuffledCountries = shuffleArray(remainingCountries).slice(0, 3);
@@ -33,12 +35,14 @@ const CountriesGame: React.FC<{ countries: Country[] }> = ({ countries }) => {
     (name: string) => () => {
       if (name === currentCountry.name) {
         setWonCountries((prevWinners) => {
+          setPreviousResult(true);
           const newWinners = [...prevWinners];
           newWinners.push(currentCountry);
           return newWinners;
         });
       } else {
         setLostCountries((prevLosers) => {
+          setPreviousResult(false);
           const newLosers = [...prevLosers];
           newLosers.push(currentCountry);
           return newLosers;
@@ -47,9 +51,17 @@ const CountriesGame: React.FC<{ countries: Country[] }> = ({ countries }) => {
       setRemainingCountries((prevRemaining) =>
         prevRemaining.filter((country) => country.name !== currentCountry.name)
       );
+      setPreviousCountry(currentCountry);
       setupRound();
     },
-    [setWonCountries, currentCountry, setupRound, setLostCountries]
+    [
+      setWonCountries,
+      currentCountry,
+      setupRound,
+      setLostCountries,
+      setPreviousCountry,
+      setPreviousResult,
+    ]
   );
 
   return (
@@ -61,6 +73,7 @@ const CountriesGame: React.FC<{ countries: Country[] }> = ({ countries }) => {
           <CountryOption name={name} handler={checkWin(name)} key={name} />
         ))}
       </div>
+      <Result isWin={previousResult} country={previousCountry} />
       <ScoreDisplay won={wonCountries} lost={lostCountries} />
     </div>
   );
@@ -94,15 +107,38 @@ const ScoreDisplay: React.FC<ScoreProps> = ({ won, lost }) => {
       <div className="scoreTitle">Won:</div>
       <div className="flagScoreContainer">
         {won.map((country) => (
-          <div className="smallFlag">{country.emoji}</div>
+          <div className="smallFlag" key={country.name}>
+            {country.emoji}
+          </div>
         ))}
       </div>
       <div className="scoreTitle">Lost:</div>
       <div className="flagScoreContainer">
         {lost.map((country) => (
-          <div className="smallFlag">{country.emoji}</div>
+          <div className="smallFlag" key={country.name}>
+            {country.emoji}
+          </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+type ResultProps = {
+  isWin?: boolean;
+  country?: Country;
+};
+const Result: React.FC<ResultProps> = ({ isWin, country }) => {
+  if (!country) {
+    return <div />;
+  }
+  const winText = "Correct!";
+  const loseText = "Incorrect!";
+  const text = isWin ? winText : loseText;
+  const className = (isWin ? "resultWin" : "resultLose") + " result";
+  return (
+    <div className={className}>
+      {country.emoji} {country.name}: {text}
     </div>
   );
 };
