@@ -1,10 +1,67 @@
 .appContainer {
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: 100vh;
+  padding: 0 200px;
 }
 
 .bigFlag {
   font-size: 500px;
+}
+
+.optionContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.option {
+  cursor: pointer;
+  font-weight: bold;
+  margin: 10px;
+  user-select: none;
+  font-size: large;
+}
+
+.option:hover {
+  color: grey;
+}
+
+.title {
+  font-size: larger;
+  margin-bottom: 20px;
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.scoreContainer {
+  flex-grow: 1;
+  overflow: hide;
+  justify-content: center;
+  border: black solid 1px;
+  padding: 20px;
+  width: 400px;
+  margin-top: 100px;
+}
+
+.flagScoreContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  flex-wrap: wrap;
+}
+
+.smallFlag {
+  margin: 0 5px;
+}
+
+.scoreTitle {
+  font-weight: bold;
+  margin-top: 10px;
 }
